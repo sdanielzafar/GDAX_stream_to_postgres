@@ -10,7 +10,7 @@ pip install --upgrade pip
 
 # Download relevant packages.
 pip install gdax
-sudo pip install pymongo
+sudo pip install psycopg2
 
 # Run the dang thing!
 nohup python gdax_stream.py >/dev/null 2>&1 &

@@ -1,6 +1,6 @@
-# This file should connect to a remote MongoDB instance and begin the dump
-# from GDAX's WebsocketClient stream. This custom implementation is required in
-# order to put each record into the remote MongoDB instance.
+# This file should connect to postgres and begin the dump from GDAX's 
+# WebsocketClient stream. This custom implementation is required in
+# order to put each record into postgres.
 #
 # Author: @drewrice2
 
@@ -13,7 +13,7 @@ import hashlib
 import time
 from threading import Thread
 from websocket import create_connection, WebSocketConnectionClosedException
-from pymongo import MongoClient
+import psycopg2 as psql
 
 # custom WebsocketClient implementation to support Mongo
 class WebsocketClient(object):
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     # Properties
     CURRENCY_PAIR = 'BTC-USD'
 
-    # Grab user-specific MongoDB details
+    # Grab user-specific Postgres details
     with open('properties.json') as data:
         properties = json.load(data)
     ADDRESS = properties['ADDRESS']
@@ -129,12 +129,19 @@ if __name__ == '__main__':
     PASSWORD = properties['PASSWORD']
     DATABASE_NAME = properties['DATABASE_NAME']
 
-    # AWS and Mongo configuration
-    m = MongoClient('mongodb://' + USER + ':' + PASSWORD + '@' + ADDRESS + '/'
-        + DATABASE_NAME)
-    db = m.db
-    btc = db.btc # this names the Mongo collection, if it does not already exist
-
+    # Postgres configuration
+    try:
+        conn = psql.connect("dbname=" + DATABASE_NAME + " user=" + USER + 
+                            " host=" + ADDRESS + " password=" + PASSWORD)
+    except:
+        print "Cannot connect to the database"
+    
+    # # AWS and Mongo configuration
+    # m = MongoClient('mongodb://' + USER + ':' + PASSWORD + '@' + ADDRESS + '/'
+    #     + DATABASE_NAME)
+    # db = m.db
+    # btc = db.btc # this names the Mongo collection, if it does not already exist
+    
     # begin streaming from GDAX
     wsClient = WebsocketClient(url="wss://ws-feed.gdax.com",
         products=CURRENCY_PAIR, mongo_collection=btc, should_print=False)

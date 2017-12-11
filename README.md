@@ -11,8 +11,12 @@ Don't forget to change your inbound security rules for the Mongo
 instance!
 
 ### Postgres server setup
-The first goal is to get Postgres up and running on a Ubuntu 16.04 Amazon EC2
-instance. Notes on how Postgres was set up for streaming will be included here:
+The first goal is to get Postgres up and running on a Ubuntu 16.04 Server. 
+Notes on how Postgres was set up for streaming will be included here:
+
+1. Make sure postgres is installed.
+2. Open Postgres for remote connection on port 5432. Configure 
+   postgresql.conf to do so.
 
 ### GDAX streaming client setup
 Next, let's use a slightly altered version of the Python GDAX client's
